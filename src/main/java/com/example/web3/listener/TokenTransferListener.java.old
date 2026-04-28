@@ -26,12 +26,24 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Transfer事件监听
+ * Transfer事件监听（旧版本 - 已废弃）
+ * 
+ * 此类已被 ImprovedTokenTransferListener 替代
+ * 保留此文件仅用于对比和学习
+ * 
+ * 主要问题：
+ * 1. 没有断点续传机制 - 系统重启会丢失数据
+ * 2. 没有链重组检测 - 无法处理区块重组
+ * 3. 使用 Thread.sleep 等待确认 - 效率低下
+ * 4. 没有状态管理 - 无法追踪记录状态
+ * 
  * @author jiangyuxuan
+ * @deprecated 使用 ImprovedTokenTransferListener 替代
  */
 @Slf4j
-@Component
+// @Component  // 已禁用，避免与新版本冲突
 @RequiredArgsConstructor
+@Deprecated
 public class TokenTransferListener implements CommandLineRunner {
 
     private final Web3j web3j;

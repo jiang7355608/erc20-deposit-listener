@@ -1,13 +1,6 @@
 
 -- PostgreSQL DDL
 
--- 创建数据库
-CREATE DATABASE web3_demo
-    WITH 
-    ENCODING = 'UTF8'
-    LC_COLLATE = 'zh_CN.UTF-8'
-    LC_CTYPE = 'zh_CN.UTF-8';
-
 -- 表: deposit_record (充值记录表)
 CREATE TABLE deposit_record (
     id                BIGSERIAL PRIMARY KEY,

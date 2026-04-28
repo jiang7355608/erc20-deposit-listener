@@ -7,7 +7,7 @@ spring:
   
   datasource:
     driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:26655/ERC20
+    url: jdbc:postgresql://10.0.15.34:6655/ERC20
     username: antdb
     password: antdb
 

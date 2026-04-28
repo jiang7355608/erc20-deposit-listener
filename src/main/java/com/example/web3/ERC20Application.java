@@ -14,10 +14,10 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @MapperScan("com.example.web3.mapper")
 @EnableConfigurationProperties
 @EnableScheduling
-public class Web3DemoApplication {
+public class ERC20Application {
 
     public static void main(String[] args) {
-        SpringApplication.run(Web3DemoApplication.class, args);
+        SpringApplication.run(ERC20Application.class, args);
     }
 }
 
