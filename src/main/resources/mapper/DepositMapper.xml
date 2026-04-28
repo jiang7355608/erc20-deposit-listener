@@ -109,5 +109,14 @@
         WHERE block_number = #{blockNumber}
     </update>
 
+    <select id="findLatestConfirmed" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM deposit_record
+        WHERE status = 'CONFIRMED'
+        ORDER BY block_number DESC, log_index DESC
+        LIMIT 1
+    </select>
+
 </mapper>
 

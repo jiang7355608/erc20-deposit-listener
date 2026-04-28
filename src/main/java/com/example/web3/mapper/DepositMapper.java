@@ -45,5 +45,10 @@ public interface DepositMapper {
      */
     int markAsReorg(@Param("blockNumber") Long blockNumber,
                     @Param("reorgDetectedAt") java.time.LocalDateTime reorgDetectedAt);
+    
+    /**
+     * 查询最新的 CONFIRMED 记录
+     */
+    DepositRecord findLatestConfirmed();
 }
 

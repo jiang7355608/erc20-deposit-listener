@@ -3,6 +3,7 @@ package com.example.web3.listener;
 import com.example.web3.config.Web3jConfig;
 import com.example.web3.entity.BlockCheckpoint;
 import com.example.web3.entity.DepositRecord;
+import com.example.web3.mapper.DepositMapper;
 import com.example.web3.service.BlockCheckpointService;
 import com.example.web3.service.DepositService;
 import com.example.web3.service.ReorgDetectionService;
@@ -51,6 +52,7 @@ public class ImprovedTokenTransferListener implements CommandLineRunner {
     private final DepositService depositService;
     private final BlockCheckpointService checkpointService;
     private final ReorgDetectionService reorgDetectionService;
+    private final DepositMapper depositMapper;
 
     private Disposable subscription;
     private int tokenDecimals = 18;
@@ -141,7 +143,7 @@ public class ImprovedTokenTransferListener implements CommandLineRunner {
                 );
                 
                 if (isReorg) {
-                    log.warn("⚠ 检测到检查点区块发生重组，需要回退处理");
+                    log.warn("检测到检查点区块发生重组，需要回退处理");
                     // 可以选择回退几个区块重新处理
                     startBlock = BigInteger.valueOf(checkpoint.getLastProcessedBlock() - 10);
                 }
@@ -291,8 +293,33 @@ public class ImprovedTokenTransferListener implements CommandLineRunner {
             // 2. 检查确认数并更新状态
             depositService.updatePendingRecordsStatus();
             
+            // 3. 更新检查点到最新的 CONFIRMED 记录
+            updateCheckpointToLatestConfirmed();
+            
         } catch (Exception e) {
             log.error("检查待确认记录失败", e);
+        }
+    }
+
+    /**
+     * 更新检查点到最新的 CONFIRMED 记录
+     */
+    private void updateCheckpointToLatestConfirmed() {
+        try {
+            // 查询最新的 CONFIRMED 记录（不需要过滤合约地址，因为一个系统只监听一个合约）
+            DepositRecord latest = depositMapper.findLatestConfirmed();
+            
+            if (latest != null) {
+                checkpointService.saveCheckpoint(
+                    latest.getContractAddress(),
+                    latest.getBlockNumber(),
+                    latest.getBlockHash()
+                );
+                log.debug("检查点已更新到区块 {}", latest.getBlockNumber());
+            }
+            
+        } catch (Exception e) {
+            log.error("更新检查点失败", e);
         }
     }
 
