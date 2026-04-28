@@ -22,5 +22,28 @@ public interface DepositMapper {
 
     List<DepositRecord> findAll(@Param("offset") Integer offset,
                                  @Param("limit") Integer limit);
+    
+    /**
+     * 查询待确认的记录
+     */
+    List<DepositRecord> findPendingRecords(@Param("limit") Integer limit);
+    
+    /**
+     * 根据区块号查询记录
+     */
+    List<DepositRecord> findByBlockNumber(@Param("blockNumber") Long blockNumber);
+    
+    /**
+     * 更新记录状态
+     */
+    int updateStatus(@Param("id") Long id, 
+                     @Param("status") String status,
+                     @Param("confirmedAt") java.time.LocalDateTime confirmedAt);
+    
+    /**
+     * 标记为重组
+     */
+    int markAsReorg(@Param("blockNumber") Long blockNumber,
+                    @Param("reorgDetectedAt") java.time.LocalDateTime reorgDetectedAt);
 }
 

@@ -9,6 +9,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
+ * 充值记录实体
  * @author jiangyuxuan
  */
 @Data
@@ -16,6 +17,15 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DepositRecord {
+    
+    /**
+     * 记录状态枚举
+     */
+    public enum Status {
+        PENDING,    // 待确认
+        CONFIRMED,  // 已确认
+        REORG       // 已重组
+    }
 
     private Long id;
     
@@ -48,5 +58,25 @@ public class DepositRecord {
     private LocalDateTime createdAt;
     
     private LocalDateTime updatedAt;
+    
+    /**
+     * 记录状态
+     */
+    private String status;
+    
+    /**
+     * 确认时间
+     */
+    private LocalDateTime confirmedAt;
+    
+    /**
+     * 是否发生过重组
+     */
+    private Boolean isReorg;
+    
+    /**
+     * 重组检测时间
+     */
+    private LocalDateTime reorgDetectedAt;
 }
 

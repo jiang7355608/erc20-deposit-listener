@@ -4,6 +4,7 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
  * @author jiangyuxuan
@@ -12,6 +13,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 @SpringBootApplication
 @MapperScan("com.example.web3.mapper")
 @EnableConfigurationProperties
+@EnableScheduling
 public class Web3DemoApplication {
 
     public static void main(String[] args) {

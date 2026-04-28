@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.web3.mapper.BlockCheckpointMapper">
+
+    <resultMap id="BaseResultMap" type="com.example.web3.entity.BlockCheckpoint">
+        <id column="id" property="id"/>
+        <result column="contract_address" property="contractAddress"/>
+        <result column="last_processed_block" property="lastProcessedBlock"/>
+        <result column="last_processed_block_hash" property="lastProcessedBlockHash"/>
+        <result column="last_processed_at" property="lastProcessedAt"/>
+        <result column="updated_at" property="updatedAt"/>
+    </resultMap>
+
+    <select id="findByContractAddress" resultMap="BaseResultMap">
+        SELECT * FROM block_checkpoint
+        WHERE contract_address = #{contractAddress}
+    </select>
+
+    <insert id="insert" parameterType="com.example.web3.entity.BlockCheckpoint">
+        INSERT INTO block_checkpoint (
+            contract_address,
+            last_processed_block,
+            last_processed_block_hash,
+            last_processed_at,
+            updated_at
+        ) VALUES (
+            #{contractAddress},
+            #{lastProcessedBlock},
+            #{lastProcessedBlockHash},
+            #{lastProcessedAt},
+            #{updatedAt}
+        )
+    </insert>
+
+    <update id="update" parameterType="com.example.web3.entity.BlockCheckpoint">
+        UPDATE block_checkpoint
+        SET last_processed_block = #{lastProcessedBlock},
+            last_processed_block_hash = #{lastProcessedBlockHash},
+            last_processed_at = #{lastProcessedAt},
+            updated_at = #{updatedAt}
+        WHERE contract_address = #{contractAddress}
+    </update>
+
+    <!-- PostgreSQL upsert 语法 -->
+    <insert id="upsert" parameterType="com.example.web3.entity.BlockCheckpoint">
+        INSERT INTO block_checkpoint (
+            contract_address,
+            last_processed_block,
+            last_processed_block_hash,
+            last_processed_at,
+            updated_at
+        ) VALUES (
+            #{contractAddress},
+            #{lastProcessedBlock},
+            #{lastProcessedBlockHash},
+            #{lastProcessedAt},
+            #{updatedAt}
+        )
+        ON CONFLICT (contract_address)
+        DO UPDATE SET
+            last_processed_block = EXCLUDED.last_processed_block,
+            last_processed_block_hash = EXCLUDED.last_processed_block_hash,
+            last_processed_at = EXCLUDED.last_processed_at,
+            updated_at = EXCLUDED.updated_at
+    </insert>
+
+</mapper>

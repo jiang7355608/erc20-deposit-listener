@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.web3.mapper.ReorgHistoryMapper">
+
+    <resultMap id="BaseResultMap" type="com.example.web3.entity.ReorgHistory">
+        <id column="id" property="id"/>
+        <result column="contract_address" property="contractAddress"/>
+        <result column="old_block_number" property="oldBlockNumber"/>
+        <result column="old_block_hash" property="oldBlockHash"/>
+        <result column="new_block_hash" property="newBlockHash"/>
+        <result column="affected_tx_count" property="affectedTxCount"/>
+        <result column="detected_at" property="detectedAt"/>
+        <result column="resolved_at" property="resolvedAt"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.example.web3.entity.ReorgHistory"
+            useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO reorg_history (
+            contract_address,
+            old_block_number,
+            old_block_hash,
+            new_block_hash,
+            affected_tx_count,
+            detected_at
+        ) VALUES (
+            #{contractAddress},
+            #{oldBlockNumber},
+            #{oldBlockHash},
+            #{newBlockHash},
+            #{affectedTxCount},
+            #{detectedAt}
+        )
+    </insert>
+
+    <select id="findRecent" resultMap="BaseResultMap">
+        SELECT * FROM reorg_history
+        ORDER BY detected_at DESC
+        LIMIT #{limit}
+    </select>
+
+    <update id="updateResolvedAt">
+        UPDATE reorg_history
+        SET resolved_at = CURRENT_TIMESTAMP
+        WHERE id = #{id}
+    </update>
+
+</mapper>

@@ -20,13 +20,18 @@
         <result column="timestamp" property="timestamp" jdbcType="BIGINT"/>
         <result column="created_at" property="createdAt" jdbcType="TIMESTAMP"/>
         <result column="updated_at" property="updatedAt" jdbcType="TIMESTAMP"/>
+        <result column="status" property="status" jdbcType="VARCHAR"/>
+        <result column="confirmed_at" property="confirmedAt" jdbcType="TIMESTAMP"/>
+        <result column="is_reorg" property="isReorg" jdbcType="BOOLEAN"/>
+        <result column="reorg_detected_at" property="reorgDetectedAt" jdbcType="TIMESTAMP"/>
     </resultMap>
 
 
     <sql id="Base_Column_List">
         id, tx_hash, block_number, block_hash, contract_address,
         from_address, to_address, amount, amount_decimal, decimals,
-        log_index, transaction_index, timestamp, created_at, updated_at
+        log_index, transaction_index, timestamp, created_at, updated_at,
+        status, confirmed_at, is_reorg, reorg_detected_at
     </sql>
 
 
@@ -35,11 +40,11 @@
         INSERT INTO deposit_record (
             tx_hash, block_number, block_hash, contract_address,
             from_address, to_address, amount, amount_decimal, decimals,
-            log_index, transaction_index, timestamp, created_at, updated_at
+            log_index, transaction_index, timestamp, status, created_at, updated_at
         ) VALUES (
             #{txHash}, #{blockNumber}, #{blockHash}, #{contractAddress},
             #{fromAddress}, #{toAddress}, #{amount}, #{amountDecimal}, #{decimals},
-            #{logIndex}, #{transactionIndex}, #{timestamp}, NOW(), NOW()
+            #{logIndex}, #{transactionIndex}, #{timestamp}, #{status}, NOW(), NOW()
         )
     </insert>
 
@@ -70,6 +75,39 @@
         ORDER BY block_number DESC, log_index DESC
         LIMIT #{limit} OFFSET #{offset}
     </select>
+
+    <select id="findPendingRecords" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM deposit_record
+        WHERE status = 'PENDING'
+        ORDER BY block_number ASC
+        LIMIT #{limit}
+    </select>
+
+    <select id="findByBlockNumber" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM deposit_record
+        WHERE block_number = #{blockNumber}
+    </select>
+
+    <update id="updateStatus">
+        UPDATE deposit_record
+        SET status = #{status},
+            confirmed_at = #{confirmedAt},
+            updated_at = NOW()
+        WHERE id = #{id}
+    </update>
+
+    <update id="markAsReorg">
+        UPDATE deposit_record
+        SET status = 'REORG',
+            is_reorg = true,
+            reorg_detected_at = #{reorgDetectedAt},
+            updated_at = NOW()
+        WHERE block_number = #{blockNumber}
+    </update>
 
 </mapper>
 
